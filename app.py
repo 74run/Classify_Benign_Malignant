@@ -1,15 +1,11 @@
 import gradio as gr
 import tensorflow as tf
 import numpy as np
-import matplotlib.pyplot as plt
-from sklearn.metrics import confusion_matrix, classification_report
-import seaborn as sns
 from tensorflow.keras.models import load_model
-from tensorflow.keras.preprocessing.image import img_to_array
 from PIL import Image
 
 # Load the pre-trained model
-model = load_model('my_model.h5')
+model = load_model('my_model_hybrid.h5')
 
 # History of predictions (for comparison feature)
 prediction_history = []
@@ -28,7 +24,7 @@ def predict_image(img):
     prediction = model.predict(img_array)
 
     # Determine result and confidence
-    if prediction[0] > 0.5:
+    if prediction[0][0] > 0.5:
         result = "Malignant"
         confidence = prediction[0][0]
     else:
@@ -39,71 +35,62 @@ def predict_image(img):
     prediction_history.append((result, confidence))
     return result, f"{confidence:.2f}"
 
-# Display metrics (dashboard)
+# Dashboard performance metrics
 def performance_dashboard():
-    # Example ground truth and predictions (update with actual data in practice)
-    y_true = [0, 0, 1, 1, 1, 0, 1]  # True labels (for demonstration)
-    y_pred = [0, 1, 1, 1, 0, 0, 1]  # Predicted labels (for demonstration)
-
-    # Confusion matrix
-    cm = confusion_matrix(y_true, y_pred)
-    fig, ax = plt.subplots(figsize=(5, 5))
-    sns.heatmap(cm, annot=True, fmt="d", cmap="Blues", xticklabels=["Benign", "Malignant"], yticklabels=["Benign", "Malignant"])
-    plt.xlabel("Predicted")
-    plt.ylabel("Actual")
-    plt.title("Confusion Matrix")
-
-    # Save confusion matrix plot as an image
-    plt.savefig("confusion_matrix.png")
-    plt.close()
-
-    # Classification report
-    report = classification_report(y_true, y_pred, target_names=["Benign", "Malignant"])
+    # Assume pre-saved images for the confusion matrix and classification report
+    confusion_matrix_image_path = "confusion_matrix.png"
+    classification_report_image_path = "report.png"
     
-    # Return the confusion matrix image and the classification report text
-    return "confusion_matrix.png", report
+    return confusion_matrix_image_path, classification_report_image_path
+
+# Function to show prediction history
+def show_prediction_history():
+    history_text = "\n".join([f"Result: {res}, Confidence: {conf:.2f}" for res, conf in prediction_history])
+    return history_text if history_text else "No predictions yet."
 
 # Create Gradio interface
 def create_gradio_interface():
-    # Define components
+    # Define components for main interface
     image_input = gr.Image(type="pil", label="Upload Image")
     result_output = gr.Textbox(label="Prediction Result")
     confidence_output = gr.Textbox(label="Confidence Score")
-    dashboard_button = gr.Button("Show Performance Dashboard")  # Fixed the label issue
+
+    # Define components for dashboard
     confusion_matrix_output = gr.Image(label="Confusion Matrix")
-    report_output = gr.Textbox(label="Classification Report")
-    history_output = gr.Textbox(label="Prediction History")
+    report_output = gr.Image(label="Classification Report")
+    history_output = gr.Textbox(label="Prediction History", lines=5, interactive=False)
 
-    # Update dashboard on button click
-    def show_dashboard():
-        confusion_img, report = performance_dashboard()
-        return confusion_img, report
-
-    def show_prediction_history():
-        history_text = "\n".join([f"Result: {res}, Confidence: {conf:.2f}" for res, conf in prediction_history])
-        return history_text
-
-    # Create main interface
+    # Define individual interfaces
     main_interface = gr.Interface(
-        fn=predict_image, 
-        inputs=image_input, 
+        fn=predict_image,
+        inputs=image_input,
         outputs=[result_output, confidence_output],
         title="Medical Image Classifier",
         description="Upload an image to classify it as Benign or Malignant.",
         live=True
     )
 
-    # Create dashboard interface
     dashboard_interface = gr.Interface(
-        fn=show_dashboard,
+        fn=performance_dashboard,
         inputs=[],
         outputs=[confusion_matrix_output, report_output],
         title="Performance Dashboard",
         description="View performance metrics and confusion matrix."
     )
 
-    # Combine interfaces
-    combined_interface = gr.TabbedInterface([main_interface, dashboard_interface], ["Classifier", "Dashboard"])
+    history_interface = gr.Interface(
+        fn=show_prediction_history,
+        inputs=[],
+        outputs=history_output,
+        title="Prediction History",
+        description="View the history of predictions made during this session."
+    )
+
+    # Combine interfaces into tabs
+    combined_interface = gr.TabbedInterface(
+        [main_interface, dashboard_interface, history_interface],
+        ["Classifier", "Dashboard", "History"]
+    )
     combined_interface.launch()
 
 # Run the Gradio interfaces
