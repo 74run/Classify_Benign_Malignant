@@ -41,7 +41,7 @@ The project includes a fully functional user interface deployed on **Hugging Fac
 
 4. **Access the Deployed Application**  
    - Access the live application on **Hugging Face Spaces**:  
-     [Medical Image Classifier]((https://huggingface.co/spaces/74run/Medical_Image_Classifier)).
+     [Medical Image Classifier] ```https://huggingface.co/spaces/74run/Medical_Image_Classifier```.
 
 ---
 
