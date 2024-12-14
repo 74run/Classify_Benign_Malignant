@@ -23,8 +23,7 @@ The project includes a fully functional user interface deployed on **Hugging Fac
 
 1. **Clone the Repository**  
    ```bash
-   git clone <repository-url>
-   cd <repository-folder>
+   git clone 
    ```
 
 2. **Install Dependencies**  
@@ -44,10 +43,6 @@ The project includes a fully functional user interface deployed on **Hugging Fac
      ```
 
 4. **Run the Application**  
-   - Train the model:  
-     ```bash
-     python train.py
-     ```
    - Launch the Gradio Interface:  
      ```bash
      python app.py
