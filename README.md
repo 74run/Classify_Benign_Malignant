@@ -23,7 +23,7 @@ The project includes a fully functional user interface deployed on **Hugging Fac
 
 1. **Clone the Repository**  
    ```bash
-   git clone 
+   git clone https://github.com/74run/Classify_Benign_Malignant.git
    ```
 
 2. **Install Dependencies**  
@@ -32,23 +32,14 @@ The project includes a fully functional user interface deployed on **Hugging Fac
    pip install -r requirements.txt
    ```
 
-3. **Dataset Preparation**  
-   - Download the dataset and organize it into `data/upper_extremity` folder.
-   - Follow the format:  
-     ```
-     data/
-       upper_extremity/
-         benign/
-         malignant/
-     ```
 
-4. **Run the Application**  
+3. **Run the Application**  
    - Launch the Gradio Interface:  
      ```bash
      python app.py
      ```
 
-5. **Access the Deployed Application**  
+4. **Access the Deployed Application**  
    - Access the live application on **Hugging Face Spaces**:  
      [Medical Image Classifier]((https://huggingface.co/spaces/74run/Medical_Image_Classifier)).
 
